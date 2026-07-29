@@ -129,6 +129,26 @@ public partial class SwimlaneChart
     public static readonly StyledProperty<double> MaxZoomProperty =
         AvaloniaProperty.Register<SwimlaneChart, double>(nameof(MaxZoom), 8.0);
 
+    /// <summary>
+    /// When <see langword="true"/>, <see cref="MinZoom"/> is ignored and the effective minimum
+    /// <see cref="Zoom"/> is instead computed automatically so the chart cannot be zoomed out past
+    /// the point where the entire date range of the current data exactly fills the plot width.
+    /// Has no effect while there is no data to measure, in which case <see cref="MinZoom"/> is
+    /// used as a fallback.
+    /// </summary>
+    public static readonly StyledProperty<bool> AutoMinZoomProperty =
+        AvaloniaProperty.Register<SwimlaneChart, bool>(nameof(AutoMinZoom));
+
+    /// <summary>
+    /// When <see langword="true"/>, <see cref="MaxZoom"/> is ignored and the effective maximum
+    /// <see cref="Zoom"/> is instead computed automatically so the chart cannot be zoomed in past
+    /// the point where the shortest task in the current data exactly fills the plot width. Has no
+    /// effect while there is no data to measure, in which case <see cref="MaxZoom"/> is used as a
+    /// fallback.
+    /// </summary>
+    public static readonly StyledProperty<bool> AutoMaxZoomProperty =
+        AvaloniaProperty.Register<SwimlaneChart, bool>(nameof(AutoMaxZoom));
+
     /// <summary>Whether the chart can be panned (drag, Ctrl/Shift+wheel, scrollbars).</summary>
     public static readonly StyledProperty<bool> IsPanEnabledProperty =
         AvaloniaProperty.Register<SwimlaneChart, bool>(nameof(IsPanEnabled), true);
@@ -376,6 +396,20 @@ public partial class SwimlaneChart
         set => SetValue(MaxZoomProperty, value);
     }
 
+    /// <inheritdoc cref="AutoMinZoomProperty"/>
+    public bool AutoMinZoom
+    {
+        get => GetValue(AutoMinZoomProperty);
+        set => SetValue(AutoMinZoomProperty, value);
+    }
+
+    /// <inheritdoc cref="AutoMaxZoomProperty"/>
+    public bool AutoMaxZoom
+    {
+        get => GetValue(AutoMaxZoomProperty);
+        set => SetValue(AutoMaxZoomProperty, value);
+    }
+
     /// <inheritdoc cref="IsPanEnabledProperty"/>
     public bool IsPanEnabled
     {
@@ -420,8 +454,8 @@ public partial class SwimlaneChart
     private static double CoerceZoom(AvaloniaObject sender, double value)
     {
         var chart = (SwimlaneChart)sender;
-        var min = chart.MinZoom;
-        var max = Math.Max(min, chart.MaxZoom);
+        var min = chart.EffectiveMinZoom;
+        var max = Math.Max(min, chart.EffectiveMaxZoom);
         return MathUtil.Clamp(value, min, max);
     }
 

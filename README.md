@@ -200,12 +200,14 @@ Set the property explicitly (or override the resource key) to use a fixed color 
 
 ### Pan & zoom
 
-| Property            | Type                   | Default | Description                                                    |
-|---------------------|------------------------|---------|------------------------------------------------------------------|
-| `Zoom`              | `double`               | `1.0`   | Horizontal zoom factor (clamped to `MinZoom`/`MaxZoom`).       |
-| `MinZoom`           | `double`               | `0.2`   | Minimum allowed `Zoom`.                                        |
-| `MaxZoom`           | `double`               | `8.0`   | Maximum allowed `Zoom`.                                        |
-| `IsPanEnabled`      | `bool`                 | `true`  | Enables/disables drag, Ctrl/Shift+wheel and scrollbar panning. |
+| Property            | Type                   | Default | Description                                                                                                                                                                                                                                                                                      |
+|---------------------|------------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Zoom`              | `double`               | `1.0`   | Horizontal zoom factor (clamped to the effective min/max, see `AutoMinZoom`/`AutoMaxZoom` below).                                                                                                                                                                                                |
+| `MinZoom`           | `double`               | `0.2`   | Minimum allowed `Zoom`. Ignored while `AutoMinZoom` is `true` and there is data to measure.                                                                                                                                                                                                       |
+| `MaxZoom`           | `double`               | `8.0`   | Maximum allowed `Zoom`. Ignored while `AutoMaxZoom` is `true` and there is data to measure.                                                                                                                                                                                                       |
+| `AutoMinZoom`       | `bool`                 | `false` | When `true`, the minimum `Zoom` is computed automatically instead of using `MinZoom`: the chart can't be zoomed out past the point where the entire date range of the current data exactly fills the plot width. Falls back to `MinZoom` while there's no data (or no plot width) to measure. |
+| `AutoMaxZoom`       | `bool`                 | `false` | When `true`, the maximum `Zoom` is computed automatically instead of using `MaxZoom`: the chart can't be zoomed in past the point where the shortest task in the current data exactly fills the plot width. Falls back to `MaxZoom` while there's no data (or no plot width) to measure.        |
+| `IsPanEnabled`      | `bool`                 | `true`  | Enables/disables drag, Ctrl/Shift+wheel and scrollbar panning.                                                                                                                                                                                                                                    |
 | `IsZoomEnabled`     | `bool`                 | `true`  | Enables/disables mouse-wheel zooming.                          |
 | `HorizontalOffset`  | `double`               | `0.0`   | Current horizontal pan offset, in pixels.                      |
 | `VerticalOffset`    | `double`               | `0.0`   | Current vertical pan offset, in pixels.                        |

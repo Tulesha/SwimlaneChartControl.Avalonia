@@ -23,11 +23,13 @@
             <TextBlock
                 Text="Scroll to zoom · Ctrl + scroll to pan vertically · Shift + scroll to pan horizontally · drag to pan · click a bar to select"
                 FontSize="12" Foreground="Gray" />
-            <Button Content="Nudge schedule"
-                    Command="{Binding NudgeScheduleCommand}"
-                    HorizontalAlignment="Left"
-                    Margin="0,8,0,0"
-                    ToolTip.Tip="Shifts each task's Start/End in place to demonstrate live redraw" />
+            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                <Button Content="Nudge schedule"
+                        Command="{Binding NudgeScheduleCommand}"
+                        ToolTip.Tip="Shifts each task's Start/End in place to demonstrate live redraw" />
+                <CheckBox Content="AutoMinZoom" IsChecked="{Binding #Chart.AutoMinZoom}" />
+                <CheckBox Content="AutoMaxZoom" IsChecked="{Binding #Chart.AutoMaxZoom}" />
+            </StackPanel>
         </StackPanel>
 
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="20" Margin="0,12,0,0">

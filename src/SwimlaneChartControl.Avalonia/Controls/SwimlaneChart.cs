@@ -54,6 +54,28 @@ public partial class SwimlaneChart : TemplatedControl
         RebuildItems();
     }
 
+    /// <summary>The effective minimum <see cref="Zoom"/>, honoring <see cref="AutoMinZoom"/>.</summary>
+    private double EffectiveMinZoom
+    {
+        get
+        {
+            if (!AutoMinZoom) return MinZoom;
+            var totalDays = (_maxDate - _minDate).TotalDays;
+            return ComputeFitZoom(totalDays) ?? MinZoom;
+        }
+    }
+
+    /// <summary>The effective maximum <see cref="Zoom"/>, honoring <see cref="AutoMaxZoom"/>.</summary>
+    private double EffectiveMaxZoom
+    {
+        get
+        {
+            if (!AutoMaxZoom) return MaxZoom;
+            var shortestDays = ShortestItemDurationDays();
+            return shortestDays is { } days ? ComputeFitZoom(days) ?? MaxZoom : MaxZoom;
+        }
+    }
+
     /// <inheritdoc/>
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
@@ -130,7 +152,8 @@ public partial class SwimlaneChart : TemplatedControl
             UpdateScrollBars();
             UpdateViewportDates();
         }
-        else if (change.Property == MinZoomProperty || change.Property == MaxZoomProperty)
+        else if (change.Property == MinZoomProperty || change.Property == MaxZoomProperty ||
+                 change.Property == AutoMinZoomProperty || change.Property == AutoMaxZoomProperty)
         {
             CoerceValue(ZoomProperty);
         }
@@ -141,6 +164,7 @@ public partial class SwimlaneChart : TemplatedControl
         }
         else if (change.Property == BoundsProperty)
         {
+            CoerceValue(ZoomProperty);
             CoerceValue(HorizontalOffsetProperty);
             CoerceValue(VerticalOffsetProperty);
             UpdateScrollBars();
@@ -203,6 +227,7 @@ public partial class SwimlaneChart : TemplatedControl
 
         RecomputeLaneLayout();
         RecomputeDateRange();
+        CoerceValue(ZoomProperty);
         CoerceValue(HorizontalOffsetProperty);
         CoerceValue(VerticalOffsetProperty);
         UpdateScrollBars();
@@ -387,6 +412,24 @@ public partial class SwimlaneChart : TemplatedControl
         SetAndRaise(ViewportStartDateProperty, ref _viewportStartDate, start);
         SetAndRaise(ViewportEndDateProperty, ref _viewportEndDate, end);
     }
+
+    /// <summary>
+    /// The <see cref="Zoom"/> at which a span of <paramref name="days"/> exactly fills the current
+    /// plot width, or <see langword="null"/> when that isn't meaningful (no span, or no room to
+    /// plot in yet).
+    /// </summary>
+    private double? ComputeFitZoom(double days)
+    {
+        if (days <= 0) return null;
+
+        var plotWidth = ComputeLayout().PlotWidth;
+        if (plotWidth <= 0) return null;
+
+        return plotWidth / (days * BaseDayWidth);
+    }
+
+    private double? ShortestItemDurationDays() =>
+        _items.Count == 0 ? null : _items.Min(i => (i.End - i.Start).TotalDays);
 
     private SwimlaneLayout ComputeLayout() => ComputeLayout(Bounds.Size);
 
