@@ -1,5 +1,8 @@
 # SwimlaneChartControl.Avalonia
 
+[![NuGet Version](https://img.shields.io/nuget/v/Tulesha.SwimlaneChartControl.Avalonia?label=nuget)](https://www.nuget.org/packages/Tulesha.SwimlaneChartControl.Avalonia/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/Tulesha.SwimlaneChartControl.Avalonia)](https://www.nuget.org/packages/Tulesha.SwimlaneChartControl.Avalonia/)
+
 A `SwimlaneChart` control for [Avalonia](https://avaloniaui.net/), inspired by the
 [Swimlane chart control from Avalonia Pro](https://docs.avaloniaui.net/controls/data-display/charts/scheduling/swimlane-chart).
 It groups tasks into horizontal lanes (departments, teams, workflow stages, ...) and renders them
@@ -7,7 +10,7 @@ as bars against a **date/time timeline** — unlike the Avalonia Pro control, ta
 `DateTime` values rather than arbitrary `double` positions. It adds built-in **pan & zoom** (mouse
 drag, mouse wheel and scrollbars) so large schedules stay usable without any extra wiring.
 
-![SwimlaneChart demo](docs/swimlane-chart-demo.gif)
+![SwimlaneChart demo](workflows/swimlane-chart-demo.gif)
 
 ## Features
 
@@ -37,6 +40,12 @@ drag, mouse wheel and scrollbars) so large schedules stay usable without any ext
 - Zoom: plain mouse wheel, zooming around the pointer position.
 - Fully themable through a `ControlTheme` — colors, fonts, lane height, task height, etc. are all
   styled properties.
+
+## Installation
+
+```bash
+dotnet add package Tulesha.SwimlaneChartControl.Avalonia
+```
 
 ## Getting started
 
