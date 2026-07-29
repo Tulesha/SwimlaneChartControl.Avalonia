@@ -18,6 +18,8 @@ without any extra wiring.
   redraws the affected bar. No need to replace the item or reassign `ItemsSource`.
 - Tasks are grouped into lanes (in first-appearance order) by the value of `LanePath`, with a
   lane-label column on the left.
+- Alternating full-width lane bands via `LaneBackgroundBrush` (even-indexed lanes) and
+  `LaneSeparatorBrush` (odd-indexed lanes).
 - Overlapping tasks within the same lane are automatically detected and stacked into sub-rows
   (using a greedy interval-scheduling pass), respecting `TaskSpacing` gaps; a lane grows taller
   than `LaneHeight` automatically if it needs more than one sub-row.
@@ -156,8 +158,9 @@ whatever the property returns), preserving the order in which each lane name fir
 | `LaneLabelWidth`      | `double`              | `140.0`   | Width of the left-hand lane-label column.                                                                                                                                            |
 | `TaskCornerRadius`    | `CornerRadius`        | `4`       | Corner radius applied to task bars.                                                                                                                                                  |
 | `TaskBrush`           | `IBrush?`             | *(theme)* | Brush used to paint a task bar when the item has no resolvable `BrushPath` value.                                                                                                    |
-| `TaskForeground`      | `IBrush?`             | `White`   | Brush used to paint task labels drawn on top of task bars.                                                                                                                           |
-| `LaneBackgroundBrush` | `IBrush?`             | *(theme)* | Brush used to paint each lane's full-width background band.                                                                                                                          |
+| `TaskForeground`      | `IBrush?`             | *(theme)* | Brush used to paint task labels drawn on top of task bars.                                                                                                                           |
+| `LaneBackgroundBrush` | `IBrush?`             | *(theme)* | Brush used to paint the full-width background band of even-indexed lanes (0, 2, 4, ...).                                                                                            |
+| `LaneSeparatorBrush`  | `IBrush?`             | `Transparent` | Brush used for lane separator lines: painted as the background band of odd-indexed lanes (1, 3, 5, ...), interleaved with `LaneBackgroundBrush` to produce alternating lane bands. |
 | `GridLineBrush`       | `IBrush?`             | *(theme)* | Brush used for lane-separator and timeline gridlines.                                                                                                                                |
 | `TodayLineBrush`      | `IBrush?`             | *(theme)* | Brush used for the "today" marker line.                                                                                                                                              |
 | `SelectionBrush`      | `IBrush?`             | *(theme)* | Brush used to outline the selected task bar.                                                                                                                                         |
@@ -179,8 +182,10 @@ control theme in
 | `BorderBrush`          | `SystemControlForegroundBaseLowBrush`    |
 | `Foreground`           | `SystemControlForegroundBaseHighBrush`   |
 | `GridLineBrush`        | `SystemControlBackgroundBaseMediumBrush` |
+| `LaneSeparatorBrush`   | `Transparent`                            |
 | `LaneBackgroundBrush`  | `SystemControlBackgroundBaseLowBrush`    |
 | `TaskBrush`            | `SystemControlHighlightAccentBrush`      |
+| `TaskForeground`       | `SystemControlForegroundBaseHighBrush`   |
 | `SelectionBrush`       | `SystemControlHighlightAccentBrush`      |
 | `TodayLineBrush`       | `SystemControlHighlightAccentBrush`      |
 

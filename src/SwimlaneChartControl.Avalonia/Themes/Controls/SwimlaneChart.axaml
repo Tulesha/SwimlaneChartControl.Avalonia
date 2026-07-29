@@ -9,6 +9,7 @@
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="GridLineBrush" Value="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
+        <Setter Property="LaneSeparatorBrush" Value="Transparent" />
         <Setter Property="LaneBackgroundBrush" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
         <Setter Property="TaskBrush" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
         <Setter Property="TaskForeground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />

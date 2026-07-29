@@ -67,13 +67,21 @@ public partial class SwimlaneChart
     public static readonly StyledProperty<IBrush?> TaskForegroundProperty =
         AvaloniaProperty.Register<SwimlaneChart, IBrush?>(nameof(TaskForeground));
 
-    /// <summary>Brush used to paint the lane band background.</summary>
+    /// <summary>Brush used to paint the background band of even-indexed lanes (0, 2, 4, ...).</summary>
     public static readonly StyledProperty<IBrush?> LaneBackgroundBrushProperty =
         AvaloniaProperty.Register<SwimlaneChart, IBrush?>(nameof(LaneBackgroundBrush));
 
     /// <summary>Brush used for lane-separator and timeline gridlines.</summary>
     public static readonly StyledProperty<IBrush?> GridLineBrushProperty =
         AvaloniaProperty.Register<SwimlaneChart, IBrush?>(nameof(GridLineBrush));
+
+    /// <summary>
+    /// Brush used for lane separator lines: painted as the background band of odd-indexed lanes
+    /// (1, 3, 5, ...), interleaved with <see cref="LaneBackgroundBrush"/> to produce alternating
+    /// lane bands.
+    /// </summary>
+    public static readonly StyledProperty<IBrush?> LaneSeparatorBrushProperty =
+        AvaloniaProperty.Register<SwimlaneChart, IBrush?>(nameof(LaneSeparatorBrush));
 
     /// <summary>Brush used to paint the "today" marker line.</summary>
     public static readonly StyledProperty<IBrush?> TodayLineBrushProperty =
@@ -165,6 +173,7 @@ public partial class SwimlaneChart
             TaskForegroundProperty,
             LaneBackgroundBrushProperty,
             GridLineBrushProperty,
+            LaneSeparatorBrushProperty,
             TodayLineBrushProperty,
             SelectionBrushProperty,
             GridLinesVisibilityProperty,
@@ -288,6 +297,13 @@ public partial class SwimlaneChart
     {
         get => GetValue(GridLineBrushProperty);
         set => SetValue(GridLineBrushProperty, value);
+    }
+
+    /// <inheritdoc cref="LaneSeparatorBrushProperty"/>
+    public IBrush? LaneSeparatorBrush
+    {
+        get => GetValue(LaneSeparatorBrushProperty);
+        set => SetValue(LaneSeparatorBrushProperty, value);
     }
 
     /// <inheritdoc cref="TodayLineBrushProperty"/>

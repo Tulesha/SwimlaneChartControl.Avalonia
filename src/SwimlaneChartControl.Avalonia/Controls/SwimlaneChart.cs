@@ -554,12 +554,18 @@ public partial class SwimlaneChart : TemplatedControl
 
     private void DrawLaneBackgrounds(DrawingContext context, in SwimlaneLayout layout, double width)
     {
-        if (LaneBackgroundBrush is not { } brush) return;
+        var evenBrush = LaneBackgroundBrush;
+        var oddBrush = LaneSeparatorBrush;
+        if (evenBrush is null && oddBrush is null) return;
 
-        foreach (var lane in _lanes)
+        for (var i = 0; i < _lanes.Count; i++)
         {
+            var lane = _lanes[i];
             var y = layout.PlotTop + lane.TopOffset - VerticalOffset;
             if (y + lane.Height < layout.PlotTop || y > layout.PlotTop + layout.PlotHeight) continue;
+
+            var brush = i % 2 == 0 ? evenBrush : oddBrush;
+            if (brush is null) continue;
 
             context.DrawRectangle(brush, null, new Rect(0, y, width, lane.Height));
         }
@@ -598,10 +604,9 @@ public partial class SwimlaneChart : TemplatedControl
         var visibility = GridLinesVisibility;
         if (visibility == GridLinesVisibility.None) return;
 
-        var pen = new Pen(GridLineBrush ?? Brushes.Transparent);
-
         if (visibility is GridLinesVisibility.Vertical or GridLinesVisibility.All)
         {
+            var pen = new Pen(GridLineBrush ?? Brushes.Transparent);
             foreach (var tick in ticks)
             {
                 var x = layout.PlotLeft + (tick - _minDate).TotalDays * layout.DayWidth - HorizontalOffset;
@@ -611,6 +616,7 @@ public partial class SwimlaneChart : TemplatedControl
 
         if (visibility is GridLinesVisibility.Horizontal or GridLinesVisibility.All)
         {
+            var pen = new Pen(GridLineBrush ?? Brushes.Transparent);
             for (var i = 0; i <= _lanes.Count; i++)
             {
                 var laneOffset = i < _lanes.Count
