@@ -4,10 +4,8 @@ A `SwimlaneChart` control for [Avalonia](https://avaloniaui.net/), inspired by t
 [Swimlane chart control from Avalonia Pro](https://docs.avaloniaui.net/controls/data-display/charts/scheduling/swimlane-chart).
 It groups tasks into horizontal lanes (departments, teams, workflow stages, ...) and renders them
 as bars against a **date/time timeline** — unlike the Avalonia Pro control, task spans are plain
-`DateTime` values rather than arbitrary `double` positions. Like
-[`GanttChartControl.Avalonia`](https://github.com/Tulesha/GanttChartControl.Avalonia), it adds
-built-in **pan & zoom** (mouse drag, mouse wheel and scrollbars) so large schedules stay usable
-without any extra wiring.
+`DateTime` values rather than arbitrary `double` positions. It adds built-in **pan & zoom** (mouse
+drag, mouse wheel and scrollbars) so large schedules stay usable without any extra wiring.
 
 ![SwimlaneChart demo](docs/swimlane-chart-demo.gif)
 
