@@ -9,6 +9,8 @@ as bars against a **date/time timeline** — unlike the Avalonia Pro control, ta
 built-in **pan & zoom** (mouse drag, mouse wheel and scrollbars) so large schedules stay usable
 without any extra wiring.
 
+![SwimlaneChart demo](docs/gantt-chart-demo.gif)
+
 ## Features
 
 - Data-bound tasks via `ItemsSource` + string property paths (`LanePath`, `TaskNamePath`,
