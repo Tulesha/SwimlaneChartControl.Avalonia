@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;net6.0;net8.0</TargetFrameworks>
+        <OutputType>Library</OutputType>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+        <Nullable>enable</Nullable>
+        <RootNamespace>SwimlaneChartControl.Avalonia</RootNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>Tulesha.SwimlaneChartControl.Avalonia</PackageId>
+        <Description>Swimlane chart control for Avalonia</Description>
+        <PackageTags>Avalonia;SwimlaneChart;Chart;Control;Xaml</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    </PropertyGroup>
+
+    <Import Project="..\..\build\Base.props"/>
+    <Import Project="..\..\build\Avalonia.props"/>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+        <None Include="..\..\LICENSE" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+</Project>
