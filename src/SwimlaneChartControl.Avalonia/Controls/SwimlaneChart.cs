@@ -657,7 +657,7 @@ public partial class SwimlaneChart : TemplatedControl
             }
         }
 
-        if (visibility is GridLinesVisibility.Horizontal or GridLinesVisibility.All)
+        if (visibility is GridLinesVisibility.Horizontal or GridLinesVisibility.All && _lanes.Count > 0)
         {
             var pen = new Pen(GridLineBrush ?? Brushes.Transparent);
             for (var i = 0; i <= _lanes.Count; i++)
