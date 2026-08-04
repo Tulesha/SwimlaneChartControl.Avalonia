@@ -35,6 +35,10 @@ public partial class SwimlaneChart
     public static readonly StyledProperty<string?> BrushPathProperty =
         AvaloniaProperty.Register<SwimlaneChart, string?>(nameof(BrushPath));
 
+    /// <summary>Name of the item property that provides a per-task text <see cref="IBrush"/>, if any.</summary>
+    public static readonly StyledProperty<string?> TextBrushPathProperty =
+        AvaloniaProperty.Register<SwimlaneChart, string?>(nameof(TextBrushPath));
+
     /// <summary>Title displayed above the chart.</summary>
     public static readonly StyledProperty<string?> TitleProperty =
         AvaloniaProperty.Register<SwimlaneChart, string?>(nameof(Title));
@@ -63,9 +67,9 @@ public partial class SwimlaneChart
     public static readonly StyledProperty<IBrush?> TaskBrushProperty =
         AvaloniaProperty.Register<SwimlaneChart, IBrush?>(nameof(TaskBrush));
 
-    /// <summary>Brush used to paint task labels drawn on top of task bars.</summary>
-    public static readonly StyledProperty<IBrush?> TaskForegroundProperty =
-        AvaloniaProperty.Register<SwimlaneChart, IBrush?>(nameof(TaskForeground));
+    /// <summary>Brush used to paint a task bar when the item has no resolvable <see cref="TextBrushPath"/> value.</summary>
+    public static readonly StyledProperty<IBrush?> TaskTextBrushProperty =
+        AvaloniaProperty.Register<SwimlaneChart, IBrush?>(nameof(TaskTextBrush));
 
     /// <summary>Brush used to paint the background band of even-indexed lanes (0, 2, 4, ...).</summary>
     public static readonly StyledProperty<IBrush?> LaneBackgroundBrushProperty =
@@ -190,7 +194,7 @@ public partial class SwimlaneChart
             LaneLabelWidthProperty,
             TaskCornerRadiusProperty,
             TaskBrushProperty,
-            TaskForegroundProperty,
+            TaskTextBrushProperty,
             LaneBackgroundBrushProperty,
             GridLineBrushProperty,
             LaneSeparatorBrushProperty,
@@ -249,6 +253,13 @@ public partial class SwimlaneChart
         set => SetValue(BrushPathProperty, value);
     }
 
+    /// <inheritdoc cref="TextBrushPathProperty"/>
+    public string? TextBrushPath
+    {
+        get => GetValue(TextBrushPathProperty);
+        set => SetValue(TextBrushPathProperty, value);
+    }
+
     /// <inheritdoc cref="TitleProperty"/>
     public string? Title
     {
@@ -298,11 +309,11 @@ public partial class SwimlaneChart
         set => SetValue(TaskBrushProperty, value);
     }
 
-    /// <inheritdoc cref="TaskForegroundProperty"/>
-    public IBrush? TaskForeground
+    /// <inheritdoc cref="TaskTextBrushProperty"/>
+    public IBrush? TaskTextBrush
     {
-        get => GetValue(TaskForegroundProperty);
-        set => SetValue(TaskForegroundProperty, value);
+        get => GetValue(TaskTextBrushProperty);
+        set => SetValue(TaskTextBrushProperty, value);
     }
 
     /// <inheritdoc cref="LaneBackgroundBrushProperty"/>

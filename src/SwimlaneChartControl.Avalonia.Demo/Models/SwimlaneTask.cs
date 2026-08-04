@@ -12,17 +12,20 @@ namespace SwimlaneChartControl.Avalonia.Demo.Models;
 public sealed partial class SwimlaneTask : ObservableObject
 {
     [ObservableProperty] private IBrush? _brush;
+    [ObservableProperty] private IBrush? _textBrush;
     [ObservableProperty] private DateTime _end;
     [ObservableProperty] private string _lane;
     [ObservableProperty] private string _name;
     [ObservableProperty] private DateTime _start;
 
-    public SwimlaneTask(string lane, string name, DateTime start, DateTime end, IBrush? brush = null)
+    public SwimlaneTask(string lane, string name, DateTime start, DateTime end, IBrush? brush = null,
+        IBrush? textBrush = null)
     {
         _lane = lane;
         _name = name;
         _start = start;
         _end = end;
         _brush = brush;
+        _textBrush = textBrush;
     }
 }

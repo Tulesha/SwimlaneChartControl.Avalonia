@@ -131,7 +131,8 @@ public partial class SwimlaneChart : TemplatedControl
                  change.Property == EndPathProperty ||
                  change.Property == LanePathProperty ||
                  change.Property == TaskNamePathProperty ||
-                 change.Property == BrushPathProperty)
+                 change.Property == BrushPathProperty ||
+                 change.Property == TextBrushPathProperty)
         {
             RebuildItems();
         }
@@ -194,6 +195,7 @@ public partial class SwimlaneChart : TemplatedControl
             var lanePath = LanePath;
             var taskNamePath = TaskNamePath;
             var brushPath = BrushPath;
+            var textBrushPath = TextBrushPath;
 
             foreach (var source in itemsSource)
             {
@@ -219,7 +221,11 @@ public partial class SwimlaneChart : TemplatedControl
                 if (!string.IsNullOrEmpty(brushPath))
                     brush = TryGetBrush(PropertyCache.GetValue(type, brushPath, source));
 
-                _items.Add(new SwimlaneTaskItem(source, lane, name, start, end, brush));
+                IBrush? textBrush = null;
+                if (!string.IsNullOrEmpty(textBrushPath))
+                    textBrush = TryGetBrush(PropertyCache.GetValue(type, textBrushPath, source));
+
+                _items.Add(new SwimlaneTaskItem(source, lane, name, start, end, brush, textBrush));
             }
         }
 
@@ -238,7 +244,7 @@ public partial class SwimlaneChart : TemplatedControl
     /// <summary>
     /// Subscribes to <see cref="INotifyPropertyChanged.PropertyChanged"/> on every source item so
     /// that in-place edits to <see cref="LanePath"/>/<see cref="StartPath"/>/<see cref="EndPath"/>/
-    /// <see cref="TaskNamePath"/>/<see cref="BrushPath"/> values trigger an automatic rebuild/
+    /// <see cref="TaskNamePath"/>/<see cref="BrushPath"/>/<see cref="TextBrushPath"/> values trigger an automatic rebuild/
     /// redraw, without requiring the caller to replace the item or reassign
     /// <see cref="ItemsSource"/>. Items no longer present are unsubscribed to avoid leaking
     /// handlers.
@@ -271,7 +277,8 @@ public partial class SwimlaneChart : TemplatedControl
             e.PropertyName != EndPath &&
             e.PropertyName != LanePath &&
             e.PropertyName != TaskNamePath &&
-            e.PropertyName != BrushPath)
+            e.PropertyName != BrushPath &&
+            e.PropertyName != TextBrushPath)
             return;
 
         RebuildItems();
@@ -692,7 +699,7 @@ public partial class SwimlaneChart : TemplatedControl
     private void DrawTasks(DrawingContext context, in SwimlaneLayout layout)
     {
         var taskBrush = TaskBrush;
-        var taskForeground = TaskForeground ?? Brushes.White;
+        var taskTextBrush = TaskTextBrush;
         var selectionBrush = SelectionBrush;
         var cornerRadius = TaskCornerRadius;
         var showLabels = ShowTaskLabels;
@@ -711,7 +718,7 @@ public partial class SwimlaneChart : TemplatedControl
             if (showLabels && item.Name.Length > 0)
             {
                 var formattedText = new FormattedText(item.Name, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
-                    typeface, FontSize, taskForeground)
+                    typeface, FontSize, item.TextBrush ?? taskTextBrush)
                 {
                     MaxTextWidth = Math.Max(0, barRect.Width - 8),
                     Trimming = TextTrimming.CharacterEllipsis
@@ -973,7 +980,8 @@ public partial class SwimlaneChart : TemplatedControl
 
     private sealed class SwimlaneTaskItem
     {
-        public SwimlaneTaskItem(object source, string lane, string name, DateTime start, DateTime end, IBrush? brush)
+        public SwimlaneTaskItem(object source, string lane, string name, DateTime start, DateTime end, IBrush? brush,
+            IBrush? textBrush)
         {
             Source = source;
             Lane = lane;
@@ -981,6 +989,7 @@ public partial class SwimlaneChart : TemplatedControl
             Start = start;
             End = end;
             Brush = brush;
+            TextBrush = textBrush;
         }
 
         public object Source { get; }
@@ -989,6 +998,7 @@ public partial class SwimlaneChart : TemplatedControl
         public DateTime Start { get; }
         public DateTime End { get; }
         public IBrush? Brush { get; }
+        public IBrush? TextBrush { get; }
         public int LaneIndex { get; set; }
         public int SubRow { get; set; }
     }

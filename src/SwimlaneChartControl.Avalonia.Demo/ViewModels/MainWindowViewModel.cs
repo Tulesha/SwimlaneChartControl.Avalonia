@@ -19,22 +19,32 @@ public partial class MainWindowViewModel : ViewModelBase
         return new[]
         {
             // Design
-            new SwimlaneTask("Design", "Wireframe", today, today.AddDays(3), Brushes.CornflowerBlue),
-            new SwimlaneTask("Design", "Mockups", today.AddDays(3), today.AddDays(6), Brushes.MediumSeaGreen),
-            new SwimlaneTask("Design", "Stakeholder review", today.AddDays(1), today.AddDays(4), Brushes.Plum),
+            new SwimlaneTask("Design", "Wireframe", today, today.AddDays(3), Brushes.CornflowerBlue,
+                Brushes.White),
+            new SwimlaneTask("Design", "Mockups", today.AddDays(3), today.AddDays(6), Brushes.MediumSeaGreen,
+                Brushes.White),
+            new SwimlaneTask("Design", "Stakeholder review", today.AddDays(1), today.AddDays(4), Brushes.Plum,
+                Brushes.White),
 
             // Development
-            new SwimlaneTask("Development", "Backend", today.AddDays(4), today.AddDays(11), Brushes.IndianRed),
-            new SwimlaneTask("Development", "Frontend", today.AddDays(6), today.AddDays(13), Brushes.SteelBlue),
-            new SwimlaneTask("Development", "Code freeze", today.AddDays(11), today.AddDays(12), Brushes.Goldenrod),
+            new SwimlaneTask("Development", "Backend", today.AddDays(4), today.AddDays(11), Brushes.IndianRed,
+                Brushes.White),
+            new SwimlaneTask("Development", "Frontend", today.AddDays(6), today.AddDays(13), Brushes.SteelBlue,
+                Brushes.White),
+            new SwimlaneTask("Development", "Code freeze", today.AddDays(11), today.AddDays(12), Brushes.Goldenrod,
+                Brushes.White),
 
             // Testing
-            new SwimlaneTask("Testing", "Unit tests", today.AddDays(6), today.AddDays(9), Brushes.SkyBlue),
-            new SwimlaneTask("Testing", "Integration", today.AddDays(9), today.AddDays(12), Brushes.MediumPurple),
+            new SwimlaneTask("Testing", "Unit tests", today.AddDays(6), today.AddDays(9), Brushes.SkyBlue,
+                Brushes.White),
+            new SwimlaneTask("Testing", "Integration", today.AddDays(9), today.AddDays(12), Brushes.MediumPurple,
+                Brushes.White),
 
             // Deployment
-            new SwimlaneTask("Deployment", "Staging", today.AddDays(11), today.AddDays(13), Brushes.Orange),
-            new SwimlaneTask("Deployment", "Production", today.AddDays(13), today.AddDays(14), Brushes.Teal),
+            new SwimlaneTask("Deployment", "Staging", today.AddDays(11), today.AddDays(13), Brushes.Orange,
+                Brushes.White),
+            new SwimlaneTask("Deployment", "Production", today.AddDays(13), today.AddDays(14), Brushes.Teal,
+                Brushes.White)
         };
     }
 

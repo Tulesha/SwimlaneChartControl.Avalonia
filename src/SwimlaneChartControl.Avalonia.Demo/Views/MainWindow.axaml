@@ -46,6 +46,7 @@
                                 StartPath="Start"
                                 EndPath="End"
                                 BrushPath="Brush"
+                                TextBrushPath="TextBrush"
                                 Title="Project Schedule" />
     </DockPanel>
 

@@ -15,7 +15,7 @@ drag, mouse wheel and scrollbars) so large schedules stay usable without any ext
 ## Features
 
 - Data-bound tasks via `ItemsSource` + string property paths (`LanePath`, `TaskNamePath`,
-  `StartPath`, `EndPath`, `BrushPath`) — no need for a fixed item type.
+  `StartPath`, `EndPath`, `BrushPath`, `TextBrushPath`) — no need for a fixed item type.
 - Live updates — if a task item implements `INotifyPropertyChanged`, editing `Lane`/`Name`/
   `Start`/`End`/`Brush` (or whatever properties the paths point at) in place automatically
   redraws the affected bar. No need to replace the item or reassign `ItemsSource`.
@@ -28,6 +28,8 @@ drag, mouse wheel and scrollbars) so large schedules stay usable without any ext
   than `LaneHeight` automatically if it needs more than one sub-row.
 - Per-task color via `BrushPath` (accepts an `IBrush` value or a color string such as `"#FF5733"`),
   falling back to `TaskBrush` when unset.
+- Per-task color via `TextBrushPath` (accepts an `IBrush` value or a color string such as `"#FFFFFF"`),
+  falling back to `TaskTextBrush` when unset.
 - Date axis that automatically switches between day / week / month tick granularity depending on
   the current zoom level, with automatic label thinning to avoid overlap.
 - "Today" marker line.
@@ -55,8 +57,8 @@ from your `App.axaml`:
 ```xml
 
 <Application.Styles>
-  <FluentTheme/>
-  <StyleInclude Source="avares://SwimlaneChartControl.Avalonia/Themes/SwimlaneChartControl.Avalonia.axaml"/>
+    <FluentTheme/>
+    <StyleInclude Source="avares://SwimlaneChartControl.Avalonia/Themes/SwimlaneChartControl.Avalonia.axaml"/>
 </Application.Styles>
 ```
 
@@ -71,18 +73,19 @@ Then use the control:
                         StartPath="Start"
                         EndPath="End"
                         BrushPath="Brush"
+                        TextBrushPath="TextBrush"
                         Title="Project Schedule"/>
 ```
 
 ```csharp
-public sealed record SwimlaneTask(string Lane, string Name, DateTime Start, DateTime End, IBrush? Brush);
+public sealed record SwimlaneTask(string Lane, string Name, DateTime Start, DateTime End, IBrush? Brush, IBrush? TextBrush);
 
 public ObservableCollection<SwimlaneTask> Tasks { get; } = new()
 {
-    new("Design", "Wireframe", DateTime.Today, DateTime.Today.AddDays(3), Brushes.CornflowerBlue),
-    new("Design", "Mockups", DateTime.Today.AddDays(3), DateTime.Today.AddDays(6), Brushes.MediumSeaGreen),
-    new("Development", "Backend", DateTime.Today.AddDays(4), DateTime.Today.AddDays(11), Brushes.IndianRed),
-    new("Testing", "Unit tests", DateTime.Today.AddDays(6), DateTime.Today.AddDays(9), Brushes.SkyBlue),
+    new("Design", "Wireframe", DateTime.Today, DateTime.Today.AddDays(3), Brushes.CornflowerBlue, Brushes.White),
+    new("Design", "Mockups", DateTime.Today.AddDays(3), DateTime.Today.AddDays(6), Brushes.MediumSeaGreen, Brushes.White),
+    new("Development", "Backend", DateTime.Today.AddDays(4), DateTime.Today.AddDays(11), Brushes.IndianRed, Brushes.White),
+    new("Testing", "Unit tests", DateTime.Today.AddDays(6), DateTime.Today.AddDays(9), Brushes.SkyBlue, Brushes.White),
 };
 ```
 
@@ -102,7 +105,7 @@ complete runnable example.
   `ObservableCollection<T>`).
 - **A property on an individual task item changes**, provided the item implements
   `INotifyPropertyChanged` **and** the changed property name matches one of `LanePath`,
-  `TaskNamePath`, `StartPath`, `EndPath` or `BrushPath` (or the item raises `PropertyChanged` with
+  `TaskNamePath`, `StartPath`, `EndPath`, `BrushPath` or `TextBrushPath` (or the item raises `PropertyChanged` with
   a `null`/empty property name, which conventionally means "several/all properties changed").
 
 Given a mutable, notifying task model:
@@ -143,14 +146,15 @@ Tasks[i] = Tasks[i] with { Start = Tasks[i].Start.AddDays(1), End = Tasks[i].End
 
 ### Data properties
 
-| Property       | Type           | Default | Description                                                                                 |
-|----------------|----------------|---------|-----------------------------------------------------------------------------------------------|
-| `ItemsSource`  | `IEnumerable?` | `null`  | The collection of tasks to display.                                                          |
-| `LanePath`     | `string?`      | `null`  | Name of the item property that provides the lane a task belongs to.                          |
-| `TaskNamePath` | `string?`      | `null`  | Name of the item property that provides the task label.                                      |
-| `StartPath`    | `string?`      | `null`  | Name of the item property that provides the task start date (`DateTime`/`DateTimeOffset`).   |
-| `EndPath`      | `string?`      | `null`  | Name of the item property that provides the task end date.                                   |
-| `BrushPath`    | `string?`      | `null`  | Name of the item property that provides a per-task `IBrush` (or a color string) to paint it. |
+| Property        | Type           | Default | Description                                                                                         |
+|-----------------|----------------|---------|-----------------------------------------------------------------------------------------------------|
+| `ItemsSource`   | `IEnumerable?` | `null`  | The collection of tasks to display.                                                                 |
+| `LanePath`      | `string?`      | `null`  | Name of the item property that provides the lane a task belongs to.                                 |
+| `TaskNamePath`  | `string?`      | `null`  | Name of the item property that provides the task label.                                             |
+| `StartPath`     | `string?`      | `null`  | Name of the item property that provides the task start date (`DateTime`/`DateTimeOffset`).          |
+| `EndPath`       | `string?`      | `null`  | Name of the item property that provides the task end date.                                          |
+| `BrushPath`     | `string?`      | `null`  | Name of the item property that provides a per-task `IBrush` (or a color string) to paint it.        |
+| `TextBrushPath` | `string?`      | `null`  | Name of the item property that provides a per-task `IBrush` (or a color string) to paint its label. |
 
 Tasks are grouped into lanes by the string value read through `LanePath` (`ToString()` of
 whatever the property returns), preserving the order in which each lane name first appears in
@@ -158,25 +162,25 @@ whatever the property returns), preserving the order in which each lane name fir
 
 ### Header / lane / task appearance
 
-| Property              | Type                  | Default   | Description                                                                                                                                                                          |
-|-----------------------|-----------------------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Title`               | `string?`             | `null`    | Title displayed centered above the timeline.                                                                                                                                         |
-| `LaneHeight`          | `double`              | `80.0`    | Minimum vertical space allotted to each lane, in pixels. A lane grows taller automatically if it needs more than one stacked sub-row.                                               |
-| `TaskHeight`          | `double`              | `30.0`    | Height of an individual task bar, in pixels.                                                                                                                                          |
-| `TaskSpacing`         | `double`              | `6.0`     | Gap between stacked task rows within a lane, in pixels (also used as the padding above/below the stacked rows when a lane grows to fit them).                                       |
-| `LaneLabelWidth`      | `double`              | `140.0`   | Width of the left-hand lane-label column.                                                                                                                                            |
-| `TaskCornerRadius`    | `CornerRadius`        | `4`       | Corner radius applied to task bars.                                                                                                                                                  |
-| `TaskBrush`           | `IBrush?`             | *(theme)* | Brush used to paint a task bar when the item has no resolvable `BrushPath` value.                                                                                                    |
-| `TaskForeground`      | `IBrush?`             | *(theme)* | Brush used to paint task labels drawn on top of task bars.                                                                                                                           |
-| `LaneBackgroundBrush` | `IBrush?`             | *(theme)* | Brush used to paint the full-width background band of even-indexed lanes (0, 2, 4, ...).                                                                                            |
-| `LaneSeparatorBrush`  | `IBrush?`             | `Transparent` | Brush used for lane separator lines: painted as the background band of odd-indexed lanes (1, 3, 5, ...), interleaved with `LaneBackgroundBrush` to produce alternating lane bands. |
-| `GridLineBrush`       | `IBrush?`             | *(theme)* | Brush used for lane-separator and timeline gridlines.                                                                                                                                |
-| `TodayLineBrush`      | `IBrush?`             | *(theme)* | Brush used for the "today" marker line.                                                                                                                                              |
-| `SelectionBrush`      | `IBrush?`             | *(theme)* | Brush used to outline the selected task bar.                                                                                                                                         |
-| `GridLinesVisibility` | `GridLinesVisibility` | `All`     | Which gridlines are drawn: `None`, `Horizontal`, `Vertical` or `All`.                                                                                                                |
-| `ShowTodayLine`       | `bool`                | `true`    | Whether the "today" marker line is drawn.                                                                                                                                            |
-| `ShowTaskLabels`      | `bool`                | `true`    | Whether each task's name is drawn as text on top of its bar (only when it fits).                                                                                                     |
-| `DateFormat`          | `string?`             | `null`    | Custom .NET date format string for axis labels (e.g. `"dd.MM.yyyy"`). When `null`, a granularity-aware default is used (`"MMM d"` for day/week ticks, `"MMM yyyy"` for month ticks). |
+| Property              | Type                  | Default       | Description                                                                                                                                                                          |
+|-----------------------|-----------------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Title`               | `string?`             | `null`        | Title displayed centered above the timeline.                                                                                                                                         |
+| `LaneHeight`          | `double`              | `80.0`        | Minimum vertical space allotted to each lane, in pixels. A lane grows taller automatically if it needs more than one stacked sub-row.                                                |
+| `TaskHeight`          | `double`              | `30.0`        | Height of an individual task bar, in pixels.                                                                                                                                         |
+| `TaskSpacing`         | `double`              | `6.0`         | Gap between stacked task rows within a lane, in pixels (also used as the padding above/below the stacked rows when a lane grows to fit them).                                        |
+| `LaneLabelWidth`      | `double`              | `140.0`       | Width of the left-hand lane-label column.                                                                                                                                            |
+| `TaskCornerRadius`    | `CornerRadius`        | `4`           | Corner radius applied to task bars.                                                                                                                                                  |
+| `TaskBrush`           | `IBrush?`             | *(theme)*     | Brush used to paint a task bar when the item has no resolvable `BrushPath` value.                                                                                                    |
+| `TaskTextBrush`       | `IBrush?`             | *(theme)*     | Brush used to paint a task bar label when the item has no resolvable `TextBrushPath` value.                                                                                          |
+| `LaneBackgroundBrush` | `IBrush?`             | *(theme)*     | Brush used to paint the full-width background band of even-indexed lanes (0, 2, 4, ...).                                                                                             |
+| `LaneSeparatorBrush`  | `IBrush?`             | `Transparent` | Brush used for lane separator lines: painted as the background band of odd-indexed lanes (1, 3, 5, ...), interleaved with `LaneBackgroundBrush` to produce alternating lane bands.   |
+| `GridLineBrush`       | `IBrush?`             | *(theme)*     | Brush used for lane-separator and timeline gridlines.                                                                                                                                |
+| `TodayLineBrush`      | `IBrush?`             | *(theme)*     | Brush used for the "today" marker line.                                                                                                                                              |
+| `SelectionBrush`      | `IBrush?`             | *(theme)*     | Brush used to outline the selected task bar.                                                                                                                                         |
+| `GridLinesVisibility` | `GridLinesVisibility` | `All`         | Which gridlines are drawn: `None`, `Horizontal`, `Vertical` or `All`.                                                                                                                |
+| `ShowTodayLine`       | `bool`                | `true`        | Whether the "today" marker line is drawn.                                                                                                                                            |
+| `ShowTaskLabels`      | `bool`                | `true`        | Whether each task's name is drawn as text on top of its bar (only when it fits).                                                                                                     |
+| `DateFormat`          | `string?`             | `null`        | Custom .NET date format string for axis labels (e.g. `"dd.MM.yyyy"`). When `null`, a granularity-aware default is used (`"MMM d"` for day/week ticks, `"MMM yyyy"` for month ticks). |
 
 Standard `TemplatedControl` properties (`Background`, `BorderBrush`, `BorderThickness`,
 `CornerRadius`, `Foreground`, `FontSize`, `FontFamily`, …) are also honored.
@@ -186,54 +190,54 @@ control theme in
 [`SwimlaneChart.axaml`](src/SwimlaneChartControl.Avalonia/Themes/Controls/SwimlaneChart.axaml) via
 `DynamicResource` bindings, so they follow the active Fluent/theme palette automatically:
 
-| Property               | Theme resource                           |
-|------------------------|-------------------------------------------|
-| `BorderBrush`          | `SystemControlForegroundBaseLowBrush`    |
-| `Foreground`           | `SystemControlForegroundBaseHighBrush`   |
-| `GridLineBrush`        | `SystemControlBackgroundBaseMediumBrush` |
-| `LaneSeparatorBrush`   | `Transparent`                            |
-| `LaneBackgroundBrush`  | `SystemControlBackgroundBaseLowBrush`    |
-| `TaskBrush`            | `SystemControlHighlightAccentBrush`      |
-| `TaskForeground`       | `SystemControlForegroundBaseHighBrush`   |
-| `SelectionBrush`       | `SystemControlHighlightAccentBrush`      |
-| `TodayLineBrush`       | `SystemControlHighlightAccentBrush`      |
+| Property              | Theme resource                           |
+|-----------------------|------------------------------------------|
+| `BorderBrush`         | `SystemControlForegroundBaseLowBrush`    |
+| `Foreground`          | `SystemControlForegroundBaseHighBrush`   |
+| `GridLineBrush`       | `SystemControlBackgroundBaseMediumBrush` |
+| `LaneSeparatorBrush`  | `Transparent`                            |
+| `LaneBackgroundBrush` | `SystemControlBackgroundBaseLowBrush`    |
+| `TaskBrush`           | `SystemControlHighlightAccentBrush`      |
+| `TaskTextBrush`       | `SystemControlForegroundBaseHighBrush`   |
+| `SelectionBrush`      | `SystemControlHighlightAccentBrush`      |
+| `TodayLineBrush`      | `SystemControlHighlightAccentBrush`      |
 
 Set the property explicitly (or override the resource key) to use a fixed color instead.
 
 ### Selection
 
 | Member             | Type                                             | Description                                                                                                      |
-|--------------------|--------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+|--------------------|--------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
 | `SelectedItem`     | `object?`                                        | The source item of the selected task (two-way bindable). Clicking a bar sets it; clicking empty space clears it. |
-| `SelectionChanged` | `event EventHandler<SelectionChangedEventArgs>?` | Raised when `SelectedItem` changes.                                                                                |
+| `SelectionChanged` | `event EventHandler<SelectionChangedEventArgs>?` | Raised when `SelectedItem` changes.                                                                              |
 
 ### Pan & zoom
 
-| Property            | Type                   | Default | Description                                                                                                                                                                                                                                                                                      |
-|---------------------|------------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Zoom`              | `double`               | `1.0`   | Horizontal zoom factor (clamped to the effective min/max, see `AutoMinZoom`/`AutoMaxZoom` below).                                                                                                                                                                                                |
-| `MinZoom`           | `double`               | `0.2`   | Minimum allowed `Zoom`. Ignored while `AutoMinZoom` is `true` and there is data to measure.                                                                                                                                                                                                       |
-| `MaxZoom`           | `double`               | `8.0`   | Maximum allowed `Zoom`. Ignored while `AutoMaxZoom` is `true` and there is data to measure.                                                                                                                                                                                                       |
+| Property            | Type                   | Default | Description                                                                                                                                                                                                                                                                                   |
+|---------------------|------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Zoom`              | `double`               | `1.0`   | Horizontal zoom factor (clamped to the effective min/max, see `AutoMinZoom`/`AutoMaxZoom` below).                                                                                                                                                                                             |
+| `MinZoom`           | `double`               | `0.2`   | Minimum allowed `Zoom`. Ignored while `AutoMinZoom` is `true` and there is data to measure.                                                                                                                                                                                                   |
+| `MaxZoom`           | `double`               | `8.0`   | Maximum allowed `Zoom`. Ignored while `AutoMaxZoom` is `true` and there is data to measure.                                                                                                                                                                                                   |
 | `AutoMinZoom`       | `bool`                 | `false` | When `true`, the minimum `Zoom` is computed automatically instead of using `MinZoom`: the chart can't be zoomed out past the point where the entire date range of the current data exactly fills the plot width. Falls back to `MinZoom` while there's no data (or no plot width) to measure. |
-| `AutoMaxZoom`       | `bool`                 | `false` | When `true`, the maximum `Zoom` is computed automatically instead of using `MaxZoom`: the chart can't be zoomed in past the point where the shortest task in the current data exactly fills the plot width. Falls back to `MaxZoom` while there's no data (or no plot width) to measure.        |
-| `IsPanEnabled`      | `bool`                 | `true`  | Enables/disables drag, Ctrl/Shift+wheel and scrollbar panning.                                                                                                                                                                                                                                    |
-| `IsZoomEnabled`     | `bool`                 | `true`  | Enables/disables mouse-wheel zooming.                          |
-| `HorizontalOffset`  | `double`               | `0.0`   | Current horizontal pan offset, in pixels.                      |
-| `VerticalOffset`    | `double`               | `0.0`   | Current vertical pan offset, in pixels.                        |
-| `ViewportStartDate` | `DateTime` (read-only) | —       | Date currently shown at the left edge of the plot area.        |
-| `ViewportEndDate`   | `DateTime` (read-only) | —       | Date currently shown at the right edge of the plot area.       |
+| `AutoMaxZoom`       | `bool`                 | `false` | When `true`, the maximum `Zoom` is computed automatically instead of using `MaxZoom`: the chart can't be zoomed in past the point where the shortest task in the current data exactly fills the plot width. Falls back to `MaxZoom` while there's no data (or no plot width) to measure.      |
+| `IsPanEnabled`      | `bool`                 | `true`  | Enables/disables drag, Ctrl/Shift+wheel and scrollbar panning.                                                                                                                                                                                                                                |
+| `IsZoomEnabled`     | `bool`                 | `true`  | Enables/disables mouse-wheel zooming.                                                                                                                                                                                                                                                         |
+| `HorizontalOffset`  | `double`               | `0.0`   | Current horizontal pan offset, in pixels.                                                                                                                                                                                                                                                     |
+| `VerticalOffset`    | `double`               | `0.0`   | Current vertical pan offset, in pixels.                                                                                                                                                                                                                                                       |
+| `ViewportStartDate` | `DateTime` (read-only) | —       | Date currently shown at the left edge of the plot area.                                                                                                                                                                                                                                       |
+| `ViewportEndDate`   | `DateTime` (read-only) | —       | Date currently shown at the right edge of the plot area.                                                                                                                                                                                                                                      |
 
 ### Interactions
 
 | Input               | Effect                                                          |
-|---------------------|-------------------------------------------------------------------|
+|---------------------|-----------------------------------------------------------------|
 | Drag on the chart   | Pans horizontally and vertically.                               |
 | Mouse wheel         | Zooms in/out, centered on the pointer.                          |
 | Ctrl + mouse wheel  | Pans vertically.                                                |
 | Shift + mouse wheel | Pans horizontally.                                              |
 | Click a task bar    | Selects it (updates `SelectedItem`, raises `SelectionChanged`). |
-| Click empty space   | Clears the current selection.                                    |
-| Scrollbars          | Pan directly.                                                    |
+| Click empty space   | Clears the current selection.                                   |
+| Scrollbars          | Pan directly.                                                   |
 
 ## Project layout
 
